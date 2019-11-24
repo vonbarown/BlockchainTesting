@@ -1,0 +1,23 @@
+{
+  "name": "BlockchainTesting",
+  "version": "1.0.0",
+  "description": "",
+  "main": "tinyBlockchain.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vonbarown/BlockchainTesting.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vonbarown/BlockchainTesting/issues"
+  },
+  "homepage": "https://github.com/vonbarown/BlockchainTesting#readme",
+  "dependencies": {
+    "sha256": "^0.2.0"
+  }
+}
