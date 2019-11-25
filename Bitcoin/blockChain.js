@@ -1,12 +1,6 @@
-let Block = require('./block.js')
 
-class Transactions {
-    constructor(sender, recipient, amount) {
-        this.sender = sender;
-        this.recipient = recipient;
-        this.amount = amount;
-    }
-}
+let Block = require('./block.js');
+let Transactions = require('./transactions.js')
 
 //blockchain class
 class Blockchain {
