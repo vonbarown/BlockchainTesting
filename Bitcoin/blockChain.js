@@ -1,11 +1,19 @@
 const sha256 = require('sha256')
 
+class Transactions {
+    constructor(sender, recipient, amount) {
+        this.sender = sender;
+        this.recipient = recipient;
+        this.amount = amount;
+    }
+}
+
+
 //block class
 class Block {
-    constructor(index, timestamp, data, prevHash) {
-        this.index = index;
+    constructor(timestamp, transactions, prevHash) {
         this.timestamp = timestamp.toLocaleString();
-        this.data = data;
+        this.transactions = transactions;
         this.prevHash = prevHash;
         this.currHash = this.createHash();
         this.nonce = 0;
@@ -27,20 +35,50 @@ class Block {
 class Blockchain {
     constructor() {
         this.chain = [this.createGenesisBlock()];
-        this.difficulty = 6;
+        this.difficulty = 2;
+        this.pendingTrans = [];
+        this.mineReward = 150;
     }
 
     //creating the genesis block
-    createGenesisBlock = () => new Block(0, new Date().toLocaleString(), 'Genesis Block', '0');
+    createGenesisBlock = () => new Block(new Date().toLocaleString(), 'Genesis Block', '0');
 
     //returning the latest block
     latestBlock = () => this.chain[this.chain.length - 1];
 
-    //adding new block to the chain
-    addBlock = (newBlock) => {
-        newBlock.prevHash = this.latestBlock().currHash;
-        newBlock.blockMiner(this.difficulty)
-        this.chain.push(newBlock);
+    //function to mine the pending transactions
+    //ignoring forced miners choice
+    minePendingTrans = (miningRewardAddress) => {
+        let block = new Block(new Date(), this.pendingTrans);
+
+        //ensuring that there is proof of work
+        block.blockMiner(this.difficulty)
+        console.log("block mining it's business");
+        //adding block to the chain
+        this.chain.push(block);
+
+        //resetting pending trans array and giving miner their reward
+        this.pendingTrans = [new Transactions(null, miningRewardAddress, this.mineReward)]
+    }
+
+    //creating new transactions and push them to the pending trans array
+    createTrans = (trans) => this.pendingTrans.push(trans);
+
+    //returns your balance after mining a pending transaction
+    returnBalanceOfAddress = (address) => {
+        let balance = 0;
+
+        //can be improved
+        for (const blocks of this.chain) {
+            for (const trans of blocks.transactions) {
+                if (trans.sender === address) {
+                    balance - + trans.amount
+                } else if (trans.recipient === address) {
+                    balance += trans.amount
+                }
+            }
+        }
+        return balance;
     }
 
     //verify that the chain has not been tampered with
@@ -49,25 +87,33 @@ class Blockchain {
             const currBlock = this.chain[i];
             const prevBlock = this.chain[i - 1];
 
+            //check if the current block hash matches the hash created by the method
             if (currBlock.currHash !== currBlock.createHash()) {
                 return false;
-            }
-            if (currBlock.prevHash !== prevBlock.currHash) {
+            } else if (currBlock.prevHash !== prevBlock.currHash) {
+                //ensuring that the the current block points to the previous block hash code
                 return false;
             }
 
             return true;
-
         }
     }
 }
 
 let vonbarcoin = new Blockchain();
-console.log('mining block1...');
-vonbarcoin.addBlock(new Block(1, new Date(), { amount: 6 }));
-console.log('mining block2...');
-vonbarcoin.addBlock(new Block(2, new Date(), { amount: 20 }));
+
+vonbarcoin.createTrans(new Transactions('sender1', 'sender2', 200))
+vonbarcoin.createTrans(new Transactions('sender2', 'sender1', 90));
+
+console.log('mining start');
+vonbarcoin.minePendingTrans('von-address');
+
+console.log('balance  ', vonbarcoin.returnBalanceOfAddress('von-address'));
+
+console.log('mining start');
+vonbarcoin.minePendingTrans('von-address');
+
+console.log('balance  ', vonbarcoin.returnBalanceOfAddress('von-address'));
 
 
 
-// console.log(JSON.stringify(vonbarcoin, null, 4));
