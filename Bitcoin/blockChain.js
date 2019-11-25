@@ -17,8 +17,7 @@ class Blockchain {
     //returning the latest block
     latestBlock = () => this.chain[this.chain.length - 1];
 
-    //function to mine the pending transactions
-    //ignoring forced miners choice
+    //function to mine the pending transactions and ignoring forced miners choice
     minePendingTrans = (miningRewardAddress) => {
         let block = new Block(new Date(), this.pendingTrans);
 
@@ -71,21 +70,6 @@ class Blockchain {
     }
 }
 
-let vonbarcoin = new Blockchain();
-
-vonbarcoin.createTrans(new Transactions('sender1', 'sender2', 200))
-vonbarcoin.createTrans(new Transactions('sender2', 'sender1', 90));
-
-console.log('mining start');
-vonbarcoin.minePendingTrans('von-address');
-
-
-console.log('balance  ', vonbarcoin.returnBalanceOfAddress('von-address'));
-
-console.log('mining start');
-vonbarcoin.minePendingTrans('von-address');
-
-console.log('balance  ', vonbarcoin.returnBalanceOfAddress('von-address'));
-
+module.exports = Blockchain;
 
 
