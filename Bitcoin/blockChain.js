@@ -8,7 +8,6 @@ class Transactions {
     }
 }
 
-
 //block class
 class Block {
     constructor(timestamp, transactions, prevHash) {
@@ -19,7 +18,7 @@ class Block {
         this.nonce = 0;
     }
 
-    createHash = () => (sha256(this.index + this.timestamp + JSON.stringify(this.data) + this.nonce).toString())
+    createHash = () => (sha256(this.timestamp + JSON.stringify(this.data) + this.nonce).toString())
 
     blockMiner(difficulty) {
         while (this.currHash.substring(0, difficulty) !== Array(difficulty + 1).join('0')) {
@@ -72,7 +71,7 @@ class Blockchain {
         for (const blocks of this.chain) {
             for (const trans of blocks.transactions) {
                 if (trans.sender === address) {
-                    balance - + trans.amount
+                    balance -= trans.amount
                 } else if (trans.recipient === address) {
                     balance += trans.amount
                 }
@@ -107,6 +106,7 @@ vonbarcoin.createTrans(new Transactions('sender2', 'sender1', 90));
 
 console.log('mining start');
 vonbarcoin.minePendingTrans('von-address');
+
 
 console.log('balance  ', vonbarcoin.returnBalanceOfAddress('von-address'));
 
