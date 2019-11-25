@@ -1,6 +1,6 @@
 const sha256 = require('sha256')
 
-
+//block class
 class Block {
     constructor(index, timestamp, data, prevHash) {
         this.index = index;
@@ -8,15 +8,26 @@ class Block {
         this.data = data;
         this.prevHash = prevHash;
         this.currHash = this.createHash();
+        this.nonce = 0;
     }
 
-    createHash = () => (sha256(this.index + this.timestamp + JSON.stringify(this.data)).toString())
+    createHash = () => (sha256(this.index + this.timestamp + JSON.stringify(this.data) + this.nonce).toString())
+
+    blockMiner(difficulty) {
+        while (this.currHash.substring(0, difficulty) !== Array(difficulty + 1).join('0')) {
+            this.nonce++;
+            this.currHash = this.createHash();
+        }
+        console.log('spelunked ' + this.currHash);
+    }
+
 }
 
-
+//blockchain class
 class Blockchain {
     constructor() {
         this.chain = [this.createGenesisBlock()];
+        this.difficulty = 6;
     }
 
     //creating the genesis block
@@ -28,7 +39,7 @@ class Blockchain {
     //adding new block to the chain
     addBlock = (newBlock) => {
         newBlock.prevHash = this.latestBlock().currHash;
-        newBlock.currHash = newBlock.createHash();
+        newBlock.blockMiner(this.difficulty)
         this.chain.push(newBlock);
     }
 
@@ -52,13 +63,11 @@ class Blockchain {
 }
 
 let vonbarcoin = new Blockchain();
+console.log('mining block1...');
 vonbarcoin.addBlock(new Block(1, new Date(), { amount: 6 }));
+console.log('mining block2...');
 vonbarcoin.addBlock(new Block(2, new Date(), { amount: 20 }));
 
-console.log(vonbarcoin.verifyChain());
 
-vonbarcoin.chain[1].data = { amount: 200 }
-
-console.log(vonbarcoin.verifyChain());
 
 // console.log(JSON.stringify(vonbarcoin, null, 4));
