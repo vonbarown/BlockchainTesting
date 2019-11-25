@@ -25,8 +25,10 @@ const createBlockchain = num => {
         blockchain.push(blockToAdd);
         previousBlock = blockToAdd;
     }
-    console.log(blockchain);
+    return blockchain;
 };
 
 const lengthToCreate = 20;
-createBlockchain(lengthToCreate);
+let chain = createBlockchain(lengthToCreate);
+
+console.log(chain);
