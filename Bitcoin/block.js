@@ -21,6 +21,15 @@ class Block {
         console.log('spelunked ' + this.currHash);
     }
 
+    hasValidTrans = () => {
+        for (const tx of this.transactions) {
+            if (!tx.isValid()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
 
 module.exports = Block

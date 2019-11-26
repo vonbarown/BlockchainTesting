@@ -32,11 +32,21 @@ class Blockchain {
     }
 
     //creating new transactions and push them to the pending trans array
-    createTrans = (trans) => this.pendingTrans.push(trans);
+    addingTrans = (trans) => {
+        //check if transaction info is filled in
+        if (!trans.sender || !trans.recipient) {
+            throw new Error('Transaction must be filled out, sender and recipient');
+        }
+        if (!trans.checkValidity()) {
+            throw new Error('cannot  add invalid transaction  to chain');
+        }
+
+        this.pendingTrans.push(trans)
+    };
 
     //returns your balance after mining a pending transaction
     returnBalanceOfAddress = (address) => {
-        let balance = 0;
+        let balance = 100;
 
         //can be improved
         for (const blocks of this.chain) {
@@ -57,8 +67,11 @@ class Blockchain {
             const currBlock = this.chain[i];
             const prevBlock = this.chain[i - 1];
 
-            //check if the current block hash matches the hash created by the method
-            if (currBlock.currHash !== currBlock.createHash()) {
+            //verify if all trans in current block is valid
+            if (!currBlock.hasValidTrans()) {
+                return false
+            } else if (currBlock.currHash !== currBlock.createHash()) {
+                //check if the current block hash matches the hash created by the method
                 return false;
             } else if (currBlock.prevHash !== prevBlock.currHash) {
                 //ensuring that the the current block points to the previous block hash code
